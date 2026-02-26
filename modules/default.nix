@@ -11,5 +11,6 @@
     ./services/agentd.nix
     ./users/agent.nix
     ./users/admin.nix
+    ./sandbox-profile.nix
   ];
 }
