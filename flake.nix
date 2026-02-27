@@ -8,12 +8,12 @@
     dagger.inputs.nixpkgs.follows = "nixpkgs";
 
     agentd = {
-      url = "github:papercomputeco/agentd";
+      url = "github:theforkproject-dev/agentd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     stereosd = {
-      url = "github:papercomputeco/stereosd";
+      url = "github:theforkproject-dev/stereosd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
