@@ -1,0 +1,25 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# DO NOT commit terraform.tfvars to git.
+
+do_token = "dop_v1_your_digitalocean_api_token"
+
+# Lock down SSH to your IP during bootstrap.
+# Find your IP: curl ifconfig.me
+allowed_ssh_ips = ["YOUR_IP/32"]
+
+# SSH key registered in DigitalOcean.
+# List keys: doctl compute ssh-key list
+ssh_key_id = "YOUR_SSH_KEY_ID"
+
+# URL to the QCOW2 image in DO Spaces (or any public URL).
+# DO supports .gz and .bz2 decompression on import. NOT .zst.
+# Upload: s3cmd put stereos.qcow2.gz s3://your-bucket/stereos.qcow2.gz
+image_url = "https://your-bucket.nyc3.digitaloceanspaces.com/stereos-opencode.qcow2.gz"
+
+# Optional overrides
+# node_name    = "stereos-agent-01"
+# region       = "nyc1"
+# size         = "s-2vcpu-4gb"
+# image_name   = "stereos-opencode"
+# mixtape      = "opencode-mixtape"
+# project_name = "stereOS"
