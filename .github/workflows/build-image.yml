@@ -1,0 +1,81 @@
+# .github/workflows/build-image.yml
+#
+# Build stereOS QCOW2 images for cloud deployment.
+#
+# Runs on: manual dispatch (workflow_dispatch) with mixtape/arch selection.
+# Produces: gzip-compressed QCOW2 as a downloadable artifact.
+#
+# Required secrets:
+#   NIX_ACCESS_TOKENS  — GitHub token for private flake inputs (agentd, stereosd)
+#                        Format: github.com=ghp_xxxx
+#   DEPLOY_SSH_PUBKEY  — SSH public key to bake into cloud images
+#                        (contents of ~/.config/stereos/deploy-key.pub)
+
+name: Build Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      mixtape:
+        description: "Mixtape to build"
+        required: true
+        default: "opencode-mixtape-cloud"
+        type: choice
+        options:
+          - opencode-mixtape-cloud
+          - claude-code-mixtape-cloud
+          - gemini-cli-mixtape-cloud
+          - full-mixtape-cloud
+      arch:
+        description: "Target architecture"
+        required: true
+        default: "x86_64-linux"
+        type: choice
+        options:
+          - x86_64-linux
+          - aarch64-linux
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          nix_path: nixpkgs=channel:nixpkgs-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = ${{ secrets.NIX_ACCESS_TOKENS }}
+            accept-flake-config = true
+
+      - name: Prepare deploy key for cloud profile
+        run: |
+          mkdir -p ~/.config/stereos
+          echo "${{ secrets.DEPLOY_SSH_PUBKEY }}" > ~/.config/stereos/deploy-key.pub
+
+      - name: Build QCOW2 image
+        run: |
+          nix build \
+            .#packages.${{ inputs.arch }}.${{ inputs.mixtape }}-qcow2 \
+            --impure \
+            --print-build-logs \
+            --accept-flake-config
+
+      - name: Compress image with gzip
+        run: |
+          cp result/stereos.qcow2 stereos.qcow2
+          gzip -9 stereos.qcow2
+          ls -lh stereos.qcow2.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stereos-${{ inputs.mixtape }}-${{ inputs.arch }}
+          path: stereos.qcow2.gz
+          retention-days: 7
+          compression-level: 0  # Already gzipped
