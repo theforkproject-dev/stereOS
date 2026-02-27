@@ -1,2 +1,16 @@
 .direnv/
 result
+result-*
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.*
+terraform/terraform.tfvars
+terraform/*.auto.tfvars
+
+# Build artifacts and temp files
+*.zip
+*.tmp
+.~lock.*

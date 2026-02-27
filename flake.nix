@@ -96,6 +96,37 @@
             features = [ ./mixtapes/full/base.nix ];
             extraModules = [ ./profiles/dev.nix ];
           };
+
+          # -- Cloud configurations (x86_64, SSH deploy key) --------------------
+          # For Digital Ocean and other x86_64 KVM cloud providers.
+          # Includes profiles/cloud.nix: baked SSH deploy key + x86_64 console.
+          opencode-mixtape-cloud = stereos-lib.mkMixtape {
+            name = "opencode-mixtape";
+            system = "x86_64-linux";
+            features = [ ./mixtapes/opencode/base.nix ];
+            extraModules = [ ./profiles/cloud.nix ];
+          };
+
+          claude-code-mixtape-cloud = stereos-lib.mkMixtape {
+            name = "claude-code-mixtape";
+            system = "x86_64-linux";
+            features = [ ./mixtapes/claude-code/base.nix ];
+            extraModules = [ ./profiles/cloud.nix ];
+          };
+
+          gemini-cli-mixtape-cloud = stereos-lib.mkMixtape {
+            name = "gemini-cli-mixtape";
+            system = "x86_64-linux";
+            features = [ ./mixtapes/gemini-cli/base.nix ];
+            extraModules = [ ./profiles/cloud.nix ];
+          };
+
+          full-mixtape-cloud = stereos-lib.mkMixtape {
+            name = "full-mixtape";
+            system = "x86_64-linux";
+            features = [ ./mixtapes/full/base.nix ];
+            extraModules = [ ./profiles/cloud.nix ];
+          };
         };
       };
     };
